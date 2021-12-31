@@ -1,0 +1,8 @@
+body {
+    background: #f4f6f9 !important;
+}
+
+.flag-border {
+    border: 40px solid transparent;
+    border-image: url('./media/flag_border.png') 12% stretch;
+}
