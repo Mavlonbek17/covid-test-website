@@ -5,4 +5,8 @@ body {
 .flag-border {
     border: 40px solid transparent;
     border-image: url('./media/flag_border.png') 12% stretch;
+} 
+
+tr {
+    vertical-align: middle;
 }
