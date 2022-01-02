@@ -2,9 +2,13 @@
 import { useEffect, useRef, useState } from 'react';
 import http from '../services/axios';
 import { saveAs } from "file-saver";
+import manImage from '../media/man.png';
+import womanImage from '../media/woman.png';
 
-function UsersList() {
-    const [patients, setPatients] = useState([]);
+function UsersList({patients, setPatients}) {
+    const [isEdit, setIsEdit] = useState(false);
+    const [obj, setObj] = useState({});
+    const formRef = useRef();
     const loader = useRef();
 
     useEffect(() => {
@@ -28,14 +32,54 @@ function UsersList() {
             passport: e.target[1].value
         };
 
-        http.post("icode/client/add/", JSON.stringify({patient}))
-            .then(response => {
-                setPatients([...patients, response.data]);
-                e.target[6].classList.remove("d-none");
-                loader.current.classList.add("d-none");
-                e.target.reset();
-            })
-            .catch(err => alert(err));
+        if (!isEdit) {
+            http.post("icode/client/add/", patient)
+                .then(response => {
+                    setPatients([...patients, response.data]);
+                    e.target[6].classList.remove("d-none");
+                    loader.current.classList.add("d-none");
+                    e.target.reset();
+                })
+                .catch(err => {
+                    e.target[6].classList.remove("d-none");
+                    loader.current.classList.add("d-none");
+                    alert(err);
+                });
+        } else {
+            let data = {
+                fi: patient.fi,
+                birthday: patient.birthday,
+                gender: patient.gender,
+                date_registiration: patient.date_registiration,
+                take_date: patient.take_date,
+                passport: patient.passport,
+            }
+
+            http.put("icode/client/" + obj.id + "/", data)
+                .then(response => {
+                    setPatients(patients.map(patient => {
+                        if (patient.id === obj.id) {
+                            patient.fi = response.data.fi;
+                            patient.birthday = response.data.birthday;
+                            patient.date_registiration = response.data.date_registiration;
+                            patient.take_date = response.data.take_date;
+                            patient.passport = response.data.passport;
+                            patient.gender = response.data.gender;
+                        }
+                        return patient;
+                    }));
+                    e.target[6].classList.remove("d-none");
+                    loader.current.classList.add("d-none");
+                    e.target.reset();
+                    setIsEdit(false);
+                    setObj({});
+                })
+                .catch(err => {
+                    e.target[6].classList.remove("d-none");
+                    loader.current.classList.add("d-none");
+                    alert(err);
+                });
+        }
     }
 
     const delete_p = (id, p_name) => {
@@ -63,15 +107,30 @@ function UsersList() {
         );
     };
 
+    const StartEdit = (obj) => {
+        setIsEdit(true);
+        setObj(obj);
+        let date_reg = obj.date_registiration.slice(0, 10);
+        let take_dat = obj.take_date.slice(0, 10);
+        let time_reg = obj.date_registiration.slice(11, 16);
+        let time_take = obj.take_date.slice(11, 16);
+        formRef.current[0].value = obj.fi;
+        formRef.current[1].value = obj.passport;
+        formRef.current[2].value = obj.birthday;
+        formRef.current[3].value = obj.gender;
+        formRef.current[4].value = date_reg + "T" + time_reg;
+        formRef.current[5].value = take_dat + "T" + time_take;
+    }
+
     return (
         <div className="container">
             <div className="row">
                 <div className="col-md-6 col-xl-4 offset-xl-0 offset-md-3 py-3">
                     <div className="card text-secondary shadow-sm">
                         <div className="card-header bg-white">
-                            <b className="fs-4">Create User</b>
+                            <b className="fs-4">{isEdit ? "Edit" : "Create"} User</b>
                         </div>
-                        <form id="form" onSubmit={(e) => AddUser(e)}>
+                        <form id="form" ref={formRef} onSubmit={(e) => AddUser(e)}>
                             <div className="card-body">
                                 <div className="mb-3">
                                     <label htmlFor="fullName" className="form-label">FIO</label>
@@ -103,21 +162,34 @@ function UsersList() {
                                 </div>
                             </div>
                             <div className="card-footer d-flex justify-content-end bg-white text-end">
-                                <button className="d-flex justify-content-center align-items-center btn btn-primary">
-                                    <i className="bi bi-plus"></i>
-                                    Create
-                                </button>
-                                <button ref={loader} className="d-flex d-none justify-content-center align-items-center btn btn-primary disabled">
-                                    <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                                    Creating...
-                                </button>
+                                {!isEdit
+                                    ? <>
+                                        <button className="d-flex justify-content-center align-items-center btn btn-primary">
+                                            <i className="bi bi-plus"></i>
+                                            Create
+                                        </button>
+                                        <button ref={loader} className="d-flex d-none justify-content-center align-items-center btn btn-primary disabled">
+                                            <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                            Creating...
+                                        </button>
+                                    </>
+                                    : <>
+                                        <button className="d-flex justify-content-center align-items-center btn btn-primary">
+                                            <i className="bi bi-pencil-square me-1"></i>
+                                            Edit
+                                        </button>
+                                        <button ref={loader} className="d-flex d-none justify-content-center align-items-center btn btn-primary disabled">
+                                            <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                            Editing...
+                                        </button>
+                                    </>}
                             </div>
                         </form>
                     </div>
                 </div>
                 <div className="col-12 col-xl-8 py-3">
                     <div className="table-responsive">
-                        <table className="table bg-white table-hover shadow-sm" style={{minWidth: "670px"}}>
+                        <table className="table bg-white table-hover shadow-sm" style={{ minWidth: "670px" }}>
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -135,11 +207,14 @@ function UsersList() {
                                             <td>{index + 1}</td>
                                             <td>{patient.fi}</td>
                                             <td>{patient.passport}</td>
-                                            <td>{patient.gender}</td>
+                                            <td width="10%" className='text-center'>
+                                                <img src={patient.gender === "male"
+                                                    ? manImage : womanImage} alt="image" className='w-50' />
+                                            </td>
                                             <td>{patient.birthday}</td>
                                             <td>
                                                 <span className='btn-group'>
-                                                    <i className='bi bi-pencil-square btn btn-primary custom btn-sm'></i>
+                                                    <i onClick={() => StartEdit(patient)} className='bi bi-pencil-square btn btn-primary custom btn-sm'></i>
                                                     <i onClick={() => delete_p(patient.id, patient.fi)} id={'del_btn_' + patient.id} className='bi bi-trash btn btn-danger custom btn-sm'></i>
                                                     <button className='btn btn-danger disabled btn-sm d-none px-2'>
                                                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

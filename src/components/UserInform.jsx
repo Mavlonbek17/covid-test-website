@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
-import Gerb from './media/emblem.svg';
-import http from './services/axios';
+import { useParams } from 'react-router-dom';
+import { useState } from 'react';
+import Gerb from '../media/emblem.svg';
+import http from '../services/axios';
 
 function UserInform() {
+    const [patient, setPat] = useState({});
+    const { id } = useParams();
 
     useEffect(() => {
-        http.get("icode/client/")
+        http.get('/patient/' + id)
             .then(res => {
-                console.log(res);
+                setPat(res.data);
             })
             .catch(err => alert(err));
     }, []);
@@ -26,7 +30,7 @@ function UserInform() {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-12 px-lg-5 py-lg-3 p-2 p-md-3 text-center">
-                        <h1 style={{ fontSize: "1.8rem" }} className="text-dark fw-light text-start">Patient: MAKHAMMADJONOV AZIZBEK MAKHMUDJON UGLI</h1>
+                        <h1 style={{ fontSize: "1.8rem" }} className="text-dark fw-light text-start">Patient: {patient.fi}</h1>
                         <div className="flag-border">
                             <div className="row">
                                 <div className="col-12 col-md-5 p-md-3 p-lg-5 p-4 d-flex align-items-center">
