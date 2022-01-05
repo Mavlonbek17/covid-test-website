@@ -10,3 +10,10 @@ body {
 tr {
     vertical-align: middle;
 }
+
+h5 {
+    margin-bottom: 0.5rem !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    font-size: 1.125rem !important;
+}

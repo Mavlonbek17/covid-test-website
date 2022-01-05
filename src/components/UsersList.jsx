@@ -4,8 +4,9 @@ import http from '../services/axios';
 import { saveAs } from "file-saver";
 import manImage from '../media/man.png';
 import womanImage from '../media/woman.png';
+import { NavLink } from 'react-router-dom';
 
-function UsersList({patients, setPatients}) {
+function UsersList({ patients, setPatients }) {
     const [isEdit, setIsEdit] = useState(false);
     const [obj, setObj] = useState({});
     const formRef = useRef();
@@ -128,36 +129,36 @@ function UsersList({patients, setPatients}) {
                 <div className="col-md-6 col-xl-4 offset-xl-0 offset-md-3 py-3">
                     <div className="card text-secondary shadow-sm">
                         <div className="card-header bg-white">
-                            <b className="fs-4">{isEdit ? "Edit" : "Create"} User</b>
+                            <b className="fs-4">Беморни {isEdit ? "Тахрирлаш" : "Киритиш"}</b>
                         </div>
                         <form id="form" ref={formRef} onSubmit={(e) => AddUser(e)}>
                             <div className="card-body">
                                 <div className="mb-3">
-                                    <label htmlFor="fullName" className="form-label">FIO</label>
+                                    <label htmlFor="fullName" className="form-label">ФИО</label>
                                     <input autoComplete='off' type="text" id="fullName" required className="text-secondary form-control" />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="passport" className="form-label">Passport</label>
+                                    <label htmlFor="passport" className="form-label">Паспорт</label>
                                     <input autoComplete='off' type="text" id="passport" required className="text-secondary form-control" />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="birthday" className="form-label">Tug'ilgan sanasi</label>
+                                    <label htmlFor="birthday" className="form-label">Туғилган санаси</label>
                                     <input autoComplete='off' type="date" required className="text-secondary form-control" id="birthday" />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="gender" className="form-label">Gender</label>
+                                    <label htmlFor="gender" className="form-label">Жинси</label>
                                     <select id="gender" className="text-secondary form-select">
                                         <option value="----">-----</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
+                                        <option value="male">Эркак</option>
+                                        <option value="female">Аёл</option>
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="date-reg" className="form-label">Topshirgan sanasi</label>
+                                    <label htmlFor="date-reg" className="form-label">Топширган санаси</label>
                                     <input autoComplete='off' type="datetime-local" required className="text-secondary form-control" />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="date-take" className="form-label">Olgan sanasi</label>
+                                    <label htmlFor="date-take" className="form-label">Олган санаси</label>
                                     <input autoComplete='off' type="datetime-local" required className="text-secondary form-control" />
                                 </div>
                             </div>
@@ -166,21 +167,21 @@ function UsersList({patients, setPatients}) {
                                     ? <>
                                         <button className="d-flex justify-content-center align-items-center btn btn-primary">
                                             <i className="bi bi-plus"></i>
-                                            Create
+                                            Киритиш
                                         </button>
                                         <button ref={loader} className="d-flex d-none justify-content-center align-items-center btn btn-primary disabled">
                                             <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                                            Creating...
+                                            Киритиляпти...
                                         </button>
                                     </>
                                     : <>
                                         <button className="d-flex justify-content-center align-items-center btn btn-primary">
                                             <i className="bi bi-pencil-square me-1"></i>
-                                            Edit
+                                            Тахрирлаш
                                         </button>
                                         <button ref={loader} className="d-flex d-none justify-content-center align-items-center btn btn-primary disabled">
                                             <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                                            Editing...
+                                            Тахрирланяпти...
                                         </button>
                                     </>}
                             </div>
@@ -193,7 +194,7 @@ function UsersList({patients, setPatients}) {
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Ismi</th>
+                                    <th>ФИО</th>
                                     <th>Passport</th>
                                     <th>Gender</th>
                                     <th>Tugilgan Sana</th>
@@ -204,14 +205,14 @@ function UsersList({patients, setPatients}) {
                                 {patients.map((patient, index) => {
                                     return (
                                         <tr key={patient.id}>
-                                            <td>{index + 1}</td>
-                                            <td>{patient.fi}</td>
-                                            <td>{patient.passport}</td>
+                                            <td><NavLink className="text-decoration-none text-dark" to={'/patient/' + patient.gener}>{index + 1}</NavLink></td>
+                                            <td><NavLink className="text-decoration-none text-dark" to={'/patient/' + patient.gener}>{patient.fi}</NavLink></td>
+                                            <td><NavLink className="text-decoration-none text-dark" to={'/patient/' + patient.gener}>{patient.passport}</NavLink></td>
                                             <td width="10%" className='text-center'>
                                                 <img src={patient.gender === "male"
                                                     ? manImage : womanImage} alt="image" className='w-50' />
                                             </td>
-                                            <td>{patient.birthday}</td>
+                                            <td><NavLink className="text-decoration-none text-dark" to={'/patient/' + patient.gener}>{patient.birthday}</NavLink></td>
                                             <td>
                                                 <span className='btn-group'>
                                                     <i onClick={() => StartEdit(patient)} className='bi bi-pencil-square btn btn-primary custom btn-sm'></i>
