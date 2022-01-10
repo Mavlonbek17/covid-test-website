@@ -8,11 +8,12 @@ import AdminLogin from './components/AdminLogin';
 
 function App() {
   const [patients, setPatients] = useState([]);
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(window.localStorage.getItem("admin"));
 
   const AdminAuth = (name, pass) => {
     if (name === "WorldMedicalAdmin" && pass === "worldmedical2020") {
       setAuth(true);
+      window.localStorage.setItem("admin", "admin");
     } else {
       alert("Бундай фойдаланувчи мавжуд эмас!")
     }

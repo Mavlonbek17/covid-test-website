@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: "http://test2.fnabiyev.uz/"
+    baseURL: "http://coronavirus-test.world-medical.uz/"
 });
 
 export default http;

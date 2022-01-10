@@ -141,7 +141,7 @@ function UserInform() {
                                     <div class="col-md-4"></div>
                                     <div class="col-md-4">
                                         <div id="qrContainer" class="w-100">
-                                            <img height="256px" width="256px" src={"http://test2.fnabiyev.uz" + patient.qr_code} alt="ds" />
+                                            <img height="256px" width="256px" src={patient.qr_code} alt="ds" />
                                         </div>
                                     </div>
                                     <div class="col-md-4"></div>
